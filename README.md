@@ -6,7 +6,7 @@ An AI-powered Retrieval-Augmented Generation (RAG) application built with the ME
 
 ## 🌐 Live Demo
 
-🚀 https://your-project.vercel.app
+🚀 https://docs-ai-assistant.vercel.app/
 
 
 ---
@@ -65,8 +65,8 @@ An AI-powered Retrieval-Augmented Generation (RAG) application built with the ME
 ### Clone Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/MERN-RAG-Chatbot.git
-cd MERN-RAG-Chatbot
+git clone https://github.com/Arti-Mauryaa/docs-ai-assistant
+cd docs-ai-assistant
 ```
 
 ### Backend
@@ -137,8 +137,8 @@ VITE_API_URL=http://localhost:3000
 
 **Arti Maurya**
 
-- GitHub: https://github.com/YOUR_GITHUB_USERNAME
-- LinkedIn: https://linkedin.com/in/YOUR_LINKEDIN_PROFILE
+- GitHub: https://github.com/Arti-Mauryaa
+- LinkedIn: https://www.linkedin.com/in/arti-maurya-ab22a6276/
 
 ---
 

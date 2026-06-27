@@ -5,6 +5,7 @@ const ChatInterface = ({ onSend, messages, loading, darkMode }) => {
   const dm = darkMode;
   const [input, setInput] = useState('');
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -18,19 +19,32 @@ const ChatInterface = ({ onSend, messages, loading, darkMode }) => {
     }
   };
 
-  const formatTime = () => {
-    return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
-
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '70vh', fontFamily: "'Inter', sans-serif", background: dm ? '#1a1a1f' : '#ffffff' }}>
-      
-      {/* Messages area */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      /* Fill available viewport height minus the sticky top bar (48px on mobile) */
+      height: 'calc(100dvh - 56px)',
+      maxHeight: '680px',
+      fontFamily: "'Inter', sans-serif",
+      background: dm ? '#1a1a1f' : '#ffffff',
+    }}>
+
+      {/* ── Messages area ── */}
+      <div style={{
+        flex: 1,
+        overflowY: 'auto',
+        padding: '16px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px',
+        /* Prevent content hiding behind iOS keyboard */
+        WebkitOverflowScrolling: 'touch',
+      }}>
         {messages.length === 0 && (
-          <div style={{ textAlign: 'center', marginTop: '40px', color: dm ? '#55556a' : '#9ca3af' }}>
-            <div style={{ fontSize: '32px', marginBottom: '12px' }}>💬</div>
-            <p style={{ fontSize: '14px', margin: 0 }}>Ask anything about your documents</p>
+          <div style={{ textAlign: 'center', marginTop: '32px', color: dm ? '#55556a' : '#9ca3af' }}>
+            <div style={{ fontSize: '28px', marginBottom: '10px' }}>💬</div>
+            <p style={{ fontSize: '13px', margin: 0 }}>Ask anything about your documents</p>
           </div>
         )}
 
@@ -39,13 +53,13 @@ const ChatInterface = ({ onSend, messages, loading, darkMode }) => {
             display: 'flex',
             flexDirection: msg.role === 'user' ? 'row-reverse' : 'row',
             alignItems: 'flex-start',
-            gap: '10px',
+            gap: '8px',
           }}>
             {/* Avatar */}
             <div style={{
-              width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0,
+              width: '28px', height: '28px', borderRadius: '50%', flexShrink: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '14px', fontWeight: '600',
+              fontSize: '12px', fontWeight: '600',
               background: msg.role === 'user'
                 ? 'linear-gradient(135deg, #6366f1, #8b5cf6)'
                 : '#2a2a3a',
@@ -55,10 +69,10 @@ const ChatInterface = ({ onSend, messages, loading, darkMode }) => {
               {msg.role === 'user' ? 'U' : '🧠'}
             </div>
 
-            {/* Bubble */}
+            {/* Bubble — max 85% on mobile so it doesn't bleed edge */}
             <div style={{
-              maxWidth: '75%',
-              padding: '12px 16px',
+              maxWidth: '85%',
+              padding: '10px 14px',
               borderRadius: msg.role === 'user' ? '16px 4px 16px 16px' : '4px 16px 16px 16px',
               background: msg.role === 'user'
                 ? 'linear-gradient(135deg, #6366f1, #7c3aed)'
@@ -67,19 +81,22 @@ const ChatInterface = ({ onSend, messages, loading, darkMode }) => {
               color: msg.role === 'user' ? '#fff' : dm ? '#d1d1e0' : '#1f2937',
               fontSize: '14px',
               lineHeight: '1.6',
+              wordBreak: 'break-word',
             }}>
               {msg.role === 'assistant' ? (
-                <div style={{
-                  color: dm ? '#d1d1e0' : '#1f2937',
-                }}>
+                <div style={{ color: dm ? '#d1d1e0' : '#1f2937' }}>
                   <ReactMarkdown
                     components={{
-                      p: ({children}) => <p style={{ margin: '0 0 8px', color: dm ? '#d1d1e0' : '#1f2937' }}>{children}</p>,
-                      strong: ({children}) => <strong style={{ color: dm ? '#e1e1f0' : '#111827', fontWeight: '600' }}>{children}</strong>,
-                      ul: ({children}) => <ul style={{ margin: '8px 0', paddingLeft: '20px', color: dm ? '#d1d1e0' : '#1f2937' }}>{children}</ul>,
-                      ol: ({children}) => <ol style={{ margin: '8px 0', paddingLeft: '20px', color: dm ? '#d1d1e0' : '#1f2937' }}>{children}</ol>,
-                      li: ({children}) => <li style={{ marginBottom: '4px', color: dm ? '#d1d1e0' : '#1f2937' }}>{children}</li>,
-                      code: ({children}) => <code style={{ background: '#1a1a2e', padding: '2px 6px', borderRadius: '4px', fontSize: '13px', color: '#a78bfa' }}>{children}</code>,
+                      p: ({ children }) => <p style={{ margin: '0 0 8px', color: dm ? '#d1d1e0' : '#1f2937' }}>{children}</p>,
+                      strong: ({ children }) => <strong style={{ color: dm ? '#e1e1f0' : '#111827', fontWeight: '600' }}>{children}</strong>,
+                      ul: ({ children }) => <ul style={{ margin: '8px 0', paddingLeft: '18px', color: dm ? '#d1d1e0' : '#1f2937' }}>{children}</ul>,
+                      ol: ({ children }) => <ol style={{ margin: '8px 0', paddingLeft: '18px', color: dm ? '#d1d1e0' : '#1f2937' }}>{children}</ol>,
+                      li: ({ children }) => <li style={{ marginBottom: '4px', color: dm ? '#d1d1e0' : '#1f2937' }}>{children}</li>,
+                      code: ({ children }) => (
+                        <code style={{ background: '#1a1a2e', padding: '2px 5px', borderRadius: '4px', fontSize: '12px', color: '#a78bfa' }}>
+                          {children}
+                        </code>
+                      ),
                     }}
                   >{msg.content}</ReactMarkdown>
                 </div>
@@ -92,14 +109,14 @@ const ChatInterface = ({ onSend, messages, loading, darkMode }) => {
 
         {/* Typing indicator */}
         {loading && (
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
             <div style={{
-              width: '32px', height: '32px', borderRadius: '50%',
+              width: '28px', height: '28px', borderRadius: '50%',
               background: '#2a2a3a', border: '1px solid #3a3a55',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px'
+              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px'
             }}>🧠</div>
             <div style={{
-              padding: '12px 16px', borderRadius: '4px 16px 16px 16px',
+              padding: '10px 14px', borderRadius: '4px 16px 16px 16px',
               background: '#222230', border: '1px solid #2a2a3a',
               display: 'flex', gap: '4px', alignItems: 'center'
             }}>
@@ -116,38 +133,58 @@ const ChatInterface = ({ onSend, messages, loading, darkMode }) => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input area */}
-      <div style={{ padding: '16px 24px', borderTop: `1px solid ${dm ? '#2a2a35' : '#e5e7eb'}` }}>
-        <form onSubmit={handleSend} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+      {/* ── Input area ── */}
+      <div style={{
+        padding: '12px 14px',
+        borderTop: `1px solid ${dm ? '#2a2a35' : '#e5e7eb'}`,
+        /* Stay above iOS home indicator */
+        paddingBottom: 'calc(12px + env(safe-area-inset-bottom))',
+      }}>
+        <form
+          onSubmit={handleSend}
+          style={{ display: 'flex', gap: '8px', alignItems: 'center' }}
+        >
           <input
+            ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={loading}
-            placeholder="Ask about your documents..."
+            placeholder="Ask about your documents…"
             style={{
-              flex: 1, padding: '12px 16px', borderRadius: '10px',
-              border: `1px solid ${dm ? '#2a2a35' : '#e5e7eb'}`, background: dm ? '#12121a' : '#f9fafb',
-              color: dm ? '#e1e1f0' : '#1f2937', fontSize: '14px', outline: 'none',
-              transition: 'border-color 0.15s',
+              flex: 1,
+              padding: '11px 14px',
+              borderRadius: '10px',
+              border: `1px solid ${dm ? '#2a2a35' : '#e5e7eb'}`,
+              background: dm ? '#12121a' : '#f9fafb',
+              color: dm ? '#e1e1f0' : '#1f2937',
+              fontSize: '14px',
+              outline: 'none',
+              minWidth: 0, /* prevent overflow */
             }}
-            onFocus={e => e.target.style.borderColor = '#6366f1'}
-            onBlur={e => e.target.style.borderColor = '#2a2a35'}
+            onFocus={e => (e.target.style.borderColor = '#6366f1')}
+            onBlur={e => (e.target.style.borderColor = dm ? '#2a2a35' : '#e5e7eb')}
           />
           <button
             type="submit"
             disabled={loading || !input.trim()}
             style={{
-              padding: '12px 20px', borderRadius: '10px', border: 'none',
+              padding: '11px 16px',
+              borderRadius: '10px',
+              border: 'none',
               background: input.trim() && !loading
                 ? 'linear-gradient(135deg, #6366f1, #7c3aed)'
-                : '#2a2a35',
+                : dm ? '#2a2a35' : '#e5e7eb',
               color: input.trim() && !loading ? '#fff' : '#55556a',
-              fontSize: '14px', fontWeight: '500', cursor: input.trim() && !loading ? 'pointer' : 'not-allowed',
-              transition: 'all 0.15s', whiteSpace: 'nowrap',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: input.trim() && !loading ? 'pointer' : 'not-allowed',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+              transition: 'all 0.15s',
             }}
           >
-            {loading ? '...' : 'Send ↑'}
+            {loading ? '…' : '↑'}
           </button>
         </form>
       </div>
@@ -155,7 +192,7 @@ const ChatInterface = ({ onSend, messages, loading, darkMode }) => {
       <style>{`
         @keyframes pulse {
           0%, 60%, 100% { opacity: 0.3; transform: scale(0.8); }
-          30% { opacity: 1; transform: scale(1.2); }
+          30%            { opacity: 1;   transform: scale(1.2); }
         }
       `}</style>
     </div>
