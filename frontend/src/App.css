@@ -1,0 +1,29 @@
+/* ===== CUSTOM DARK THEME =====
+body {
+  background: #0f0f11 !important;
+  color: #f1f1f3 !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2a3a;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3a55;
+}
+
+::selection {
+  background: #6366f1;
+  color: #fff;
+} */

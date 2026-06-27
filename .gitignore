@@ -1,0 +1,26 @@
+# Dependencies
+backend/node_modules/
+frontend/node_modules/
+
+# Environment
+backend/.env
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+
+# Build
+frontend/dist/
+
+# Runtime data
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+backend/faissdb/*
+!backend/faissdb/.gitkeep
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
