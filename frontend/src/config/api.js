@@ -1,8 +1,6 @@
-
 const apiBase = import.meta.env.VITE_API_URL || "http://localhost:3000";
 export const BASE_URL = `${apiBase}/api/v1`;
 
-console.log('API BASE URL:', BASE_URL)
 export const endpoints = {
   register: `${BASE_URL}/auth/register`,
   login: `${BASE_URL}/auth/login`,

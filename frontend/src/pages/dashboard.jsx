@@ -116,6 +116,7 @@ const Dashboard = () => {
   const loadChatHistory = async (sessionId) => {
     setChatLoading(true);
     setSidebarOpen(false);
+    setActiveTab('chat');
     try {
       const res = await apiFetch(endpoints.getChatHistory(sessionId), {}, token);
       setChatSessionId(res._id || res.id);
@@ -243,16 +244,6 @@ const Dashboard = () => {
               fontSize: '16px', flexShrink: 0,
             }}>🧠</div>
             <span style={{ fontSize: '16px', fontWeight: '600', color: dm ? '#f1f1f3' : '#1f2937' }}>DocsAI</span>
-            <button
-              onClick={() => setDarkMode(!dm)}
-              style={{
-                marginLeft: 'auto',
-                background: dm ? '#2a2a3a' : '#f3f4f6',
-                border: `1px solid ${dm ? '#3a3a55' : '#e5e7eb'}`,
-                borderRadius: '20px', padding: '4px 10px', cursor: 'pointer',
-                fontSize: '14px', transition: 'all 0.2s',
-              }}
-            >{dm ? '☀️' : '🌙'}</button>
           </div>
           <p style={{ fontSize: '12px', color: dm ? '#6b6b7a' : '#9ca3af', margin: 0, paddingLeft: '42px' }}>RAG-powered assistant</p>
         </div>
@@ -287,69 +278,66 @@ const Dashboard = () => {
         </nav>
 
         {/* Chat sessions list */}
-        {activeTab === 'chat' && (
-          <div style={{ padding: '0 10px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-            <button
-              onClick={createChatSession}
-              disabled={chatLoading}
-              style={{
-                width: '100%', padding: '9px 12px', borderRadius: '8px',
-                border: '1px solid #3a3a55', background: 'transparent',
-                color: '#6366f1', fontSize: '13px', fontWeight: '500',
-                cursor: 'pointer', display: 'flex', alignItems: 'center',
-                gap: '6px', justifyContent: 'center', marginBottom: '14px',
-              }}
-            >
-              <span style={{ fontSize: '16px' }}>+</span> New chat
-            </button>
 
-            <p style={{ fontSize: '11px', fontWeight: '600', color: dm ? '#55556a' : '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 8px 4px' }}>Recent</p>
-
-            <div style={{ flex: 1, overflowY: 'auto' }}>
-              {chatSessions.length === 0 && (
-                <p style={{ fontSize: '13px', color: dm ? '#55556a' : '#9ca3af', padding: '8px 4px' }}>No chats yet</p>
-              )}
-              {chatSessions.map(session => (
-                <div key={session._id} style={{ position: 'relative', marginBottom: '2px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <button
-                      onClick={() => loadChatHistory(session._id)}
-                      style={{
-                        flex: 1, textAlign: 'left', padding: '8px 10px',
-                        borderRadius: '7px', border: 'none', cursor: 'pointer',
-                        fontSize: '13px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                        background: chatSessionId === session._id ? (dm ? '#2a2a3a' : '#eef2ff') : 'transparent',
-                        color: chatSessionId === session._id ? '#6366f1' : (dm ? '#8888a0' : '#6b7280'),
-                      }}
-                    >{session.title}</button>
-                    <button
-                      onClick={() => setMenuOpenId(menuOpenId === session._id ? null : session._id)}
-                      style={{ background: 'transparent', border: 'none', color: dm ? '#55556a' : '#9ca3af', cursor: 'pointer', padding: '4px 6px', fontSize: '16px', borderRadius: '4px' }}
-                    >⋯</button>
-                  </div>
-                  {menuOpenId === session._id && (
-                    <div ref={menuRef} style={{
-                      position: 'absolute', right: 0, top: '36px', zIndex: 30,
-                      background: dm ? '#1e1e28' : '#ffffff',
-                      border: `1px solid ${dm ? '#2a2a3a' : '#e5e7eb'}`,
-                      borderRadius: '10px', padding: '6px', minWidth: '150px',
-                      boxShadow: '0 8px 24px rgba(0,0,0,0.4)'
-                    }}>
-                      <button onClick={() => { setMenuOpenId(null); handleEditSessionTitle(session._id, session.title); }}
-                        style={{ width: '100%', textAlign: 'left', padding: '8px 12px', borderRadius: '6px', border: 'none', background: 'transparent', color: dm ? '#c0c0d0' : '#374151', fontSize: '13px', cursor: 'pointer' }}>
-                        ✏️ Rename
-                      </button>
-                      <button onClick={() => { setMenuOpenId(null); handleDeleteSession(session._id); }}
-                        style={{ width: '100%', textAlign: 'left', padding: '8px 12px', borderRadius: '6px', border: 'none', background: 'transparent', color: '#f87171', fontSize: '13px', cursor: 'pointer' }}>
-                        🗑️ Delete
-                      </button>
-                    </div>
-                  )}
+        <div style={{ padding: '0 10px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <button
+            onClick={createChatSession}
+            disabled={chatLoading}
+            style={{
+              width: '100%', padding: '9px 12px', borderRadius: '8px',
+              border: '1px solid #3a3a55', background: 'transparent',
+              color: '#6366f1', fontSize: '13px', fontWeight: '500',
+              cursor: 'pointer', display: 'flex', alignItems: 'center',
+              gap: '6px', justifyContent: 'center', marginBottom: '14px',
+            }}
+          >
+            <span style={{ fontSize: '16px' }}>+</span> New chat
+          </button>
+          <p style={{ fontSize: '11px', fontWeight: '600', color: dm ? '#55556a' : '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 8px 4px' }}>Recent</p>
+          <div style={{ flex: 1, overflowY: 'auto' }}>
+            {chatSessions.length === 0 && (
+              <p style={{ fontSize: '13px', color: dm ? '#55556a' : '#9ca3af', padding: '8px 4px' }}>No chats yet</p>
+            )}
+            {chatSessions.map(session => (
+              <div key={session._id} style={{ position: 'relative', marginBottom: '2px' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <button
+                    onClick={() => loadChatHistory(session._id)}
+                    style={{
+                      flex: 1, textAlign: 'left', padding: '8px 10px',
+                      borderRadius: '7px', border: 'none', cursor: 'pointer',
+                      fontSize: '13px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                      background: chatSessionId === session._id ? (dm ? '#2a2a3a' : '#eef2ff') : 'transparent',
+                      color: chatSessionId === session._id ? '#6366f1' : (dm ? '#8888a0' : '#6b7280'),
+                    }}
+                  >{session.title}</button>
+                  <button
+                    onClick={() => setMenuOpenId(menuOpenId === session._id ? null : session._id)}
+                    style={{ background: 'transparent', border: 'none', color: dm ? '#55556a' : '#9ca3af', cursor: 'pointer', padding: '4px 6px', fontSize: '16px', borderRadius: '4px' }}
+                  >⋯</button>
                 </div>
-              ))}
-            </div>
+                {menuOpenId === session._id && (
+                  <div ref={menuRef} style={{
+                    position: 'absolute', right: 0, top: '36px', zIndex: 30,
+                    background: dm ? '#1e1e28' : '#ffffff',
+                    border: `1px solid ${dm ? '#2a2a3a' : '#e5e7eb'}`,
+                    borderRadius: '10px', padding: '6px', minWidth: '150px',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.4)'
+                  }}>
+                    <button onClick={() => { setMenuOpenId(null); handleEditSessionTitle(session._id, session.title); }}
+                      style={{ width: '100%', textAlign: 'left', padding: '8px 12px', borderRadius: '6px', border: 'none', background: 'transparent', color: dm ? '#c0c0d0' : '#374151', fontSize: '13px', cursor: 'pointer' }}>
+                      ✏️ Rename
+                    </button>
+                    <button onClick={() => { setMenuOpenId(null); handleDeleteSession(session._id); }}
+                      style={{ width: '100%', textAlign: 'left', padding: '8px 12px', borderRadius: '6px', border: 'none', background: 'transparent', color: '#f87171', fontSize: '13px', cursor: 'pointer' }}>
+                      🗑️ Delete
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
-        )}
+        </div>
 
         {/* Sign out */}
         <div style={{ padding: '14px 10px', borderTop: `1px solid ${dm ? '#2a2a35' : '#e5e7eb'}`, marginTop: 'auto' }}>
